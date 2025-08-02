@@ -1,6 +1,6 @@
 # Blueprint for Spring projects
 
-**Blueprint Spring** is a minimal yet powerful template for quickly bootstrapping a Spring Boot application. This template provides a clean and structured foundation, allowing developers to skip repetitive setup and jump straight into building their features.
+**Self Learning Platform** is a minimal yet powerful template for quickly bootstrapping a Spring Boot application. This template provides a clean and structured foundation, allowing developers to skip repetitive setup and jump straight into building their features.
 
 ---
 
