@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>co.in.nextgencoder</groupId>
-	<artifactId>springblueprint</artifactId>
+	<artifactId>learningpath</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Spring Blueprint</name>
-	<description>Blueprint to create new spring services</description>
+	<name>Learning Path</name>
+	<description>Application to have shared learning path</description>
 	<url/>
 	<licenses>
 		<license/>

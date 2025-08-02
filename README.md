@@ -70,7 +70,7 @@ You should see a sample response like:
 src
 └── main
     ├── java
-    │   └── co.in.nextgencoder.springblueprint
+    │   └── co.in.nextgencoder.learningpath
     │       ├── config
     │       ├── controller
     │       ├── domain

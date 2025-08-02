@@ -2,10 +2,10 @@ server:
   port: 8080
 
 spring:
-  application.name: Spring Blueprint
+  application.name: Learning Path
 
   datasource:
-    url: jdbc:postgresql://localhost:4321/SampleDB
+    url: jdbc:postgresql://localhost:4321/learningpath
     username: postgres
     password: root
   jpa:
@@ -22,6 +22,6 @@ rsa:
 
 logging.level:
   root: INFO
-  co.in.nextgencoder.springblueprint: DEBUG
+  co.in.nextgencoder.learningpath: ERROR
   org.springframework.web: TRACE
   org.hibernate.SQL: DEBUG
