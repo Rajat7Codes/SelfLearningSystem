@@ -5,6 +5,8 @@ import co.in.nextgencoder.learningpath.domain.Section;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Spring Data JPA repository for the Division entity.
  */
@@ -12,4 +14,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DivisionRepository extends JpaRepository<Division, Long> {
 
+    List<Division> findAllBySectionIdOrderByAlignmentAsc(long sectionId);
 }

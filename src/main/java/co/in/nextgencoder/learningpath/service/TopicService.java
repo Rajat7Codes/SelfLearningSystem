@@ -3,10 +3,9 @@ package co.in.nextgencoder.learningpath.service;
 import co.in.nextgencoder.learningpath.domain.*;
 import co.in.nextgencoder.learningpath.domain.enumeration.ProgressStatus;
 import co.in.nextgencoder.learningpath.reporitory.*;
-import co.in.nextgencoder.learningpath.service.dto.ActiveTopicDTO;
-import co.in.nextgencoder.learningpath.service.dto.ActiveTopicItemDTO;
-import co.in.nextgencoder.learningpath.service.dto.TopicDTO;
+import co.in.nextgencoder.learningpath.service.dto.*;
 import co.in.nextgencoder.learningpath.service.exception.BadRequestException;
+import co.in.nextgencoder.learningpath.service.mapper.ProgressMapper;
 import co.in.nextgencoder.learningpath.service.mapper.TopicItemMapper;
 import co.in.nextgencoder.learningpath.service.mapper.TopicMapper;
 import org.slf4j.Logger;
@@ -48,6 +47,9 @@ public class TopicService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ProgressMapper progressMapper;
+
 
     public TopicDTO save(TopicDTO topic) {
         Topic savedTopic = topicMapper.toTopic(topic);
@@ -60,6 +62,52 @@ public class TopicService {
                 .map(topicMapper::toTopicDTO)
                 .toList();
     }
+
+    public List<MinDivisionDTO> getTotalProgressList() {
+        List<MinDivisionDTO> divisionList = divisionRepository.findAllBySectionIdOrderByAlignmentAsc(1)
+                .stream().map(progressMapper::toMinDivisionDTO).toList();
+
+        for( MinDivisionDTO division : divisionList) {
+            log.info("Division => "+division.getTitle());
+            List<MinTopicDTO> topicList = topicRepository.findAllByDivisionIdOrderByAlignmentAsc(division.getId())
+                    .stream().map(progressMapper::toMinTopicDTO).toList();
+
+            for( MinTopicDTO topic : topicList) {
+                log.info("Topic => "+topic.getTitle());
+                List<ProgressTopicItemDTO> topicItemList = topicItemRepository.findAllByTopicIdOrderByAlignmentAsc(topic.getId())
+                        .stream().map(progressMapper::toProgressTopicItemDTO).toList();
+
+                for( ProgressTopicItemDTO topicItem : topicItemList) {
+                    log.info("Topic Item => "+topicItem.getTitle());
+                    Optional<UserTopicProgress> userTopicProgress = userTopicProgressRepository.findByUserIdAndTopicItemId(
+                            userService.getUserProfile().getId(),
+                            topicItem.getId()
+                    );
+
+                    if( userTopicProgress.isPresent() && userTopicProgress.get().getStatus() == ProgressStatus.COMPLETED) {
+                        topicItem.setCompleted(true);
+                        topic.setCompletedTopicItems(topic.getCompletedTopicItems() + 1);
+                    } else {
+                        topicItem.setCompleted(false);
+                    }
+                }
+
+                topic.setTotalTopicItems((long) topicItemList.size());
+                topic.setCompleted(topic.getTotalTopicItems() - topic.getCompletedTopicItems() == 0);
+                topic.setTopicItems(topicItemList);
+
+                division.setCompletedTopics(division.getCompletedTopics() +
+                        (topic.getCompleted() ? 1 : 0));
+                division.setTotalTopics(division.getTotalTopics() + 1);
+            }
+
+            division.setCompleted(division.getTotalTopics() - division.getCompletedTopics() == 0);
+            division.setTopics(topicList);
+        }
+
+        return divisionList;
+    }
+
 
     public List<ActiveTopicDTO> findByDeadlineDate(LocalDate date) {
         List<Topic> topics = topicRepository.findByDeadlineDateLessThanEqual(date);
